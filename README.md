@@ -4,7 +4,10 @@
 This is where the description for this will go 
 This links to a Public version of Tableau that shows charts of Profit Margins [Tableau Sales Viz](https://www.example.com)
 
-## Rental Dvd SQL
+## Rental DVD SQL
+
+![DVD Rental Database Schema](https://github.com/mkcr53/portfolio/blob/main/dvd-rental-sample-database-diagram.png)
+
 Ex Query: Which film was most rented in the United States?
 ```SQL
 SELECT film.title, COUNT(rental.rental_id) AS rental_count
