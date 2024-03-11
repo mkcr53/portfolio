@@ -31,7 +31,7 @@ Welcome to my GitHub portfolio! I'm Malik Cross, a skilled Data Analyst dedicate
 
 **Portfolio Links**:
 - [Python Data Generation Script](https://github.com/mkcr53/portfolio/blob/main/data_generation.py)
-- [CSV Dataset](https://github.com/mkcr53/portfolio/blob/main/telehealth_dummydataset.csv)
+- [CSV Dataset](https://github.com/mkcr53/portfolio/blob/main/telehealth_startup_dummy_data.csv)
 - [Tableau Public Dashboard](https://public.tableau.com/app/profile/malik.cross/vizzes)
 
 ## Additional Works or Contributions
