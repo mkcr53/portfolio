@@ -4,57 +4,59 @@ import random
 import string
 from datetime import datetime, timedelta
 
-# Function to generate a random date within a specified range.
+
 def generate_random_date(start_date, end_date):
     time_between_dates = end_date - start_date
-    random_number_of_days = random.randrange(time_between_dates.days)
+    days_between_dates = time_between_dates.days
+    random_number_of_days = random.randrange(days_between_dates)
     return start_date + timedelta(days=random_number_of_days)
 
-# Function to generate a random name for a hub.
+
 def generate_hub_name():
     prefixes = ['North', 'South', 'East', 'West', 'Central']
+    middles = ['Valley', 'Mountain', 'River', 'City', 'Metro', 'Urban', 'Suburban']
     suffixes = ['Wellness', 'Health', 'Care', 'Therapy', 'Healing', 'Clinic', 'Center']
-    middle_parts = ['Valley', 'Mountain', 'River', 'City', 'Metro', 'Urban', 'Suburban']
-    return f"{random.choice(prefixes)} {random.choice(middle_parts)} {random.choice(suffixes)}"
+    return f"{random.choice(prefixes)} {random.choice(middles)} {random.choice(suffixes)}"
 
-# Function to generate a realistic number of sessions attended by a patient.
-def generate_sessions_attended():
-    if random.random() < 0.1:  # 10% chance for extended engagement
-        return random.randint(12, 20)
-    else:
-        return random.randint(1, 10)
 
-# Parameters
+def simulate_patient_journey():
+    contacted = 1  # All referrals are considered contacted
+    scheduled = 1 if random.random() < 0.6 else 0  # 40-60% are scheduled
+    return [contacted, scheduled]
+
+
 states = ['CA', 'FL', 'TX', 'AZ']
 hub_names = [generate_hub_name() for _ in range(20)]
-patient_id_length = 8
-target_rows = 10000
+num_records = 10000
 start_date = datetime(2021, 1, 1)
 end_date = datetime(2022, 12, 31)
 
-# Adjusted revenue and cost parameters
-revenue_per_session_adjusted = 120
-cost_per_referral_adjusted_range = (200, 300)
-
-# Data generation
 data = []
-for _ in range(target_rows):
+for _ in range(num_records):
     state = random.choice(states)
     hub = random.choice(hub_names)
-    doctor_id = "DR_" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-    patient_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=patient_id_length))
-    referral_time = generate_random_date(start_date, end_date).strftime('%Y-%m-%d')
-    cost_per_referral_adjusted = random.randint(*cost_per_referral_adjusted_range)
-    conversion_status = "Yes" if np.random.rand() < 0.4 else "No"
-    sessions_attended = generate_sessions_attended() if conversion_status == "Yes" else 0
-    revenue = sessions_attended * revenue_per_session_adjusted
-    cost = cost_per_referral_adjusted
+    doctor_id = 'DR_' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    patient_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    referral_date = generate_random_date(start_date, end_date).strftime('%Y-%m-%d')
+    sessions_attended = random.randint(0, 10)  # Number of sessions attended
+    first_session_attended = 1 if sessions_attended > 0 else 0  # Indicates conversion and first session attendance
+    multiple_sessions_attended = 1 if sessions_attended > 1 else 0  # Indicates attending more than one session
+    revenue = sessions_attended * 100  # Assuming $100 revenue per session
+    cost = 200  # Assuming a fixed cost of $200 per referral
     net_revenue = revenue - cost
-    data.append([state, hub, doctor_id, patient_id, conversion_status, sessions_attended, revenue, cost, net_revenue, referral_time])
+    patient_journey = simulate_patient_journey()
 
-# Create DataFrame and export to CSV
-df = pd.DataFrame(data, columns=['State', 'Hub', 'Doctor_ID', 'Patient_ID', 'Conversion_Status', 'Sessions_Attended', 'Revenue', 'Cost', 'Net_Revenue', 'Referral_Time'])
-csv_filename = 'telehealth_startup_dummy_data.csv'
-df.to_csv(csv_filename, index=False)
+    record = [state, hub, doctor_id, patient_id, referral_date, sessions_attended,
+              revenue, cost, net_revenue, patient_journey[0], patient_journey[1], first_session_attended,
+              multiple_sessions_attended]
+    data.append(record)
 
-print(f"CSV file generated: {csv_filename}")
+columns = ['State', 'Hub', 'Doctor_ID', 'Patient_ID', 'Referral_Date', 'Sessions_Attended',
+           'Revenue', 'Cost', 'Net_Revenue', 'Contacted', 'Scheduled', 'First Session Attended',
+           'Multiple Sessions Attended']
+
+df = pd.DataFrame(data, columns=columns)
+csv_file = 'telehealth_startup_data.csv'
+df.to_csv(csv_file, index=False)
+
+print(f"Data successfully generated and saved to {csv_file}")
